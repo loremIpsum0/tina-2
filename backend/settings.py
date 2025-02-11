@@ -20,6 +20,7 @@ from typing import List, Literal, Optional
 from typing_extensions import Self
 from quart import Request
 from backend.utils import parse_multi_columns, generateFilterString
+from dotenv import load_dotenv
 
 DOTENV_PATH = os.environ.get(
     "DOTENV_PATH",
@@ -30,8 +31,20 @@ DOTENV_PATH = os.environ.get(
         ".env"
     )
 )
-MINIMUM_SUPPORTED_AZURE_OPENAI_PREVIEW_API_VERSION = "2024-05-01-preview"
 
+DOTENV_DEV_PATH = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)),
+    '.env.development'
+)
+ 
+# Check if development env exists and load it
+if os.path.exists(DOTENV_DEV_PATH):
+    logging.debug(f"Loading development environment from {DOTENV_DEV_PATH}")
+    load_dotenv(DOTENV_DEV_PATH, override=True)
+else:
+    logging.debug(f"No development environment file found at {DOTENV_DEV_PATH}")
+ 
+MINIMUM_SUPPORTED_AZURE_OPENAI_PREVIEW_API_VERSION = "2024-05-01-preview"
 
 class _UiSettings(BaseSettings):
     model_config = SettingsConfigDict(
